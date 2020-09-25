@@ -22,3 +22,4 @@ publish/
 *.iml
 *.ipr
 
+/bin/
