@@ -1,53 +1,42 @@
 package com.upgrad.FoodOrderingApp.service.dao;
 
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.upgrad.FoodOrderingApp.service.entity.CustomerAuth;
+//This Class is created to access DB with respect to CustomerAuth Entity
 
 @Repository
 public class CustomerAuthDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Transactional(propagation = Propagation.REQUIRED)
-	public CustomerAuth createAuthToken(final CustomerAuth customerAuthEntity) {
-		try {
-			entityManager.persist(customerAuthEntity);
-		} catch (Exception e) {
-			System.out.println("DB Error, couldn't get customer auth details");
-			e.printStackTrace();
-		}
-		return customerAuthEntity;
-	}
 
-	public CustomerAuth updateAuthToken(final CustomerAuth customerAuthEntity) {
-		try {
-			entityManager.merge(customerAuthEntity);
-		} catch (Exception e) {
-			System.out.println("DB Error, couldn't get customer auth details");
-			e.printStackTrace();
-		}
-		return customerAuthEntity;
-	}
+    //To get Customer Auth By AccessToken if no results return null
+    public CustomerAuthEntity getCustomerAuthByAccessToken(String accessToken){
+        try{
+            CustomerAuthEntity customerAuthEntity = entityManager.createNamedQuery("getCustomerAuthByAccessToken",CustomerAuthEntity.class).setParameter("access_Token",accessToken).getSingleResult();
+            return customerAuthEntity;
+        }catch (NoResultException nre){
+            return null;
+        }
 
-	public CustomerAuth getAuthTokenEntityByAccessToken(final String accessToken) {
-		try {
-			return entityManager.createNamedQuery("customerAuthTokenByAccessToken", CustomerAuth.class)
-					.setParameter("accessToken", accessToken).getSingleResult();
-		} catch (NoResultException nre) {
-			return null;
-		} catch (Exception e) {
-			System.out.println("DB Error, couldn't get customer auth details");
-			e.printStackTrace();
-			return null;
-		}
-	}
+    }
+
+    //To save CustomerAuthEntity in the DB
+    public CustomerAuthEntity createCustomerAuth (CustomerAuthEntity customerAuthEntity){
+        entityManager.persist(customerAuthEntity);
+        return customerAuthEntity;
+    }
+
+    //To upadte CustomerAuthEntity in the DB
+    public CustomerAuthEntity customerLogout (CustomerAuthEntity customerAuthEntity){
+        entityManager.merge(customerAuthEntity);
+        return customerAuthEntity;
+    }
+
 }
