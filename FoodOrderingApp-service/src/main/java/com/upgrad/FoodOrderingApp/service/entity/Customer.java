@@ -2,94 +2,127 @@ package com.upgrad.FoodOrderingApp.service.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The persistent class for the customer database table.
  * 
  */
 @Entity
-@NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
+@Table(name = "customer", schema = "public")
+@NamedQueries({
+		@NamedQuery(name = "customerByContactNumber", query = "select c from Customer c where c.contactNumber = :contactNumber") })
+
 public class Customer implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-	@Column(name="contact_number")
+	@Column(name = "contact_number", unique = true)
+	@NotNull
+	@Size(max = 30)
 	private String contactNumber;
 
+	@Column(name = "email")
+	@Size(max = 50)
 	private String email;
 
+	@Column(name = "firstname")
+	@NotNull
+	@Size(max = 30)
 	private String firstname;
 
+	@Column(name = "lastname")
+	@Size(max = 30)
 	private String lastname;
 
+	@Column(name = "password")
+	@NotNull
+	@Size(max = 255)
 	private String password;
 
+	@Column(name = "salt")
+	@NotNull
+	@Size(max = 255)
 	private String salt;
 
+	@Column(name = "uuid", unique = true)
+	@Size(max = 200)
 	private String uuid;
 
-	//bi-directional many-to-one association to CustomerAddress
-	@OneToMany(mappedBy="customer")
-	private List<CustomerAddress> customerAddresses;
+	// bi-directional many-to-one association to CustomerAddress
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<CustomerAddress> customerAddresses = new ArrayList<>();
 
-	//bi-directional many-to-one association to CustomerAuth
-	@OneToMany(mappedBy="customer")
-	private List<CustomerAuth> customerAuths;
+	// bi-directional many-to-one association to CustomerAuth
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<CustomerAuth> customerAuths = new ArrayList<>();
 
-	//bi-directional many-to-one association to Order
-	@OneToMany(mappedBy="customer")
-	private List<Order> orders;
+	// bi-directional many-to-one association to Order
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	private List<Order> orders = new ArrayList<>();
 
-	public Customer() {
+	public long getId() {
+		return id;
 	}
 
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public String getContactNumber() {
-		return this.contactNumber;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getFirstName() {
+		return firstname;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstname = firstName;
+	}
+
+	public String getLastName() {
+		return lastname;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastname = lastName;
 	}
 
 	public String getEmail() {
-		return this.email;
+		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public String getFirstname() {
-		return this.firstname;
+	public String getContactNumber() {
+		return contactNumber;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-
-	public String getLastname() {
-		return this.lastname;
-	}
-
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setContactNumber(String contactNumber) {
+		this.contactNumber = contactNumber;
 	}
 
 	public String getPassword() {
-		return this.password;
+		return password;
 	}
 
 	public void setPassword(String password) {
@@ -97,85 +130,21 @@ public class Customer implements Serializable {
 	}
 
 	public String getSalt() {
-		return this.salt;
+		return salt;
 	}
 
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
 
-	public String getUuid() {
-		return this.uuid;
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder().append(this, obj).isEquals();
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public List<CustomerAddress> getCustomerAddresses() {
-		return this.customerAddresses;
-	}
-
-	public void setCustomerAddresses(List<CustomerAddress> customerAddresses) {
-		this.customerAddresses = customerAddresses;
-	}
-
-	public CustomerAddress addCustomerAddress(CustomerAddress customerAddress) {
-		getCustomerAddresses().add(customerAddress);
-		customerAddress.setCustomer(this);
-
-		return customerAddress;
-	}
-
-	public CustomerAddress removeCustomerAddress(CustomerAddress customerAddress) {
-		getCustomerAddresses().remove(customerAddress);
-		customerAddress.setCustomer(null);
-
-		return customerAddress;
-	}
-
-	public List<CustomerAuth> getCustomerAuths() {
-		return this.customerAuths;
-	}
-
-	public void setCustomerAuths(List<CustomerAuth> customerAuths) {
-		this.customerAuths = customerAuths;
-	}
-
-	public CustomerAuth addCustomerAuth(CustomerAuth customerAuth) {
-		getCustomerAuths().add(customerAuth);
-		customerAuth.setCustomer(this);
-
-		return customerAuth;
-	}
-
-	public CustomerAuth removeCustomerAuth(CustomerAuth customerAuth) {
-		getCustomerAuths().remove(customerAuth);
-		customerAuth.setCustomer(null);
-
-		return customerAuth;
-	}
-
-	public List<Order> getOrders() {
-		return this.orders;
-	}
-
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
-	}
-
-	public Order addOrder(Order order) {
-		getOrders().add(order);
-		order.setCustomer(this);
-
-		return order;
-	}
-
-	public Order removeOrder(Order order) {
-		getOrders().remove(order);
-		order.setCustomer(null);
-
-		return order;
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

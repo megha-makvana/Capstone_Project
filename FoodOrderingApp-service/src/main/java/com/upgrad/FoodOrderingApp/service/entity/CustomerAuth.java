@@ -1,87 +1,75 @@
 package com.upgrad.FoodOrderingApp.service.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * The persistent class for the customer_auth database table.
  * 
  */
 @Entity
-@Table(name="customer_auth")
-@NamedQuery(name="CustomerAuth.findAll", query="SELECT c FROM CustomerAuth c")
+@Table(name = "customer_auth", schema = "public")
+@NamedQueries({
+	@NamedQuery(name = "customerAuthTokenByAccessToken", query = "select ct from CustomerAuth ct where ct.accessToken =:accessToken") 
+})
 public class CustomerAuth implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Integer id;
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-	@Column(name="access_token")
-	private String accessToken;
-
-	@Column(name="expires_at")
-	private Timestamp expiresAt;
-
-	@Column(name="login_at")
-	private Timestamp loginAt;
-
-	@Column(name="logout_at")
-	private Timestamp logoutAt;
-
+	@Column(name = "uuid", unique = true)
+	@NotNull
+	@Size(max = 200)
 	private String uuid;
 
-	//bi-directional many-to-one association to Customer
 	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	@NotNull
 	private Customer customer;
 
-	public CustomerAuth() {
+	@Column(name = "access_token")
+	@Size(max = 500)
+	private String accessToken;
+
+	@Column(name = "login_at")
+	private ZonedDateTime loginAt;
+
+	@Column(name = "expires_at")
+	private ZonedDateTime expiresAt;
+
+	@Column(name = "logout_at")
+	private ZonedDateTime logoutAt;
+
+	public long getId() {
+		return id;
 	}
 
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public String getAccessToken() {
-		return this.accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-
-	public Timestamp getExpiresAt() {
-		return this.expiresAt;
-	}
-
-	public void setExpiresAt(Timestamp expiresAt) {
-		this.expiresAt = expiresAt;
-	}
-
-	public Timestamp getLoginAt() {
-		return this.loginAt;
-	}
-
-	public void setLoginAt(Timestamp loginAt) {
-		this.loginAt = loginAt;
-	}
-
-	public Timestamp getLogoutAt() {
-		return this.logoutAt;
-	}
-
-	public void setLogoutAt(Timestamp logoutAt) {
-		this.logoutAt = logoutAt;
-	}
-
 	public String getUuid() {
-		return this.uuid;
+		return uuid;
 	}
 
 	public void setUuid(String uuid) {
@@ -89,11 +77,53 @@ public class CustomerAuth implements Serializable {
 	}
 
 	public Customer getCustomer() {
-		return this.customer;
+		return customer;
 	}
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public ZonedDateTime getLoginAt() {
+		return loginAt;
+	}
+
+	public void setLoginAt(ZonedDateTime loginAt) {
+		this.loginAt = loginAt;
+	}
+
+	public ZonedDateTime getExpiresAt() {
+		return expiresAt;
+	}
+
+	public void setExpiresAt(ZonedDateTime expiresAt) {
+		this.expiresAt = expiresAt;
+	}
+
+	public ZonedDateTime getLogoutAt() {
+		return logoutAt;
+	}
+
+	public void setLogoutAt(ZonedDateTime logoutAt) {
+		this.logoutAt = logoutAt;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder().append(this, obj).isEquals();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
