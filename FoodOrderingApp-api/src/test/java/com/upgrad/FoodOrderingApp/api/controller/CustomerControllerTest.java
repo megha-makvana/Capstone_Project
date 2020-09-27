@@ -1,8 +1,8 @@
 package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.Customer;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuth;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
@@ -43,7 +43,7 @@ public class CustomerControllerTest {
     //This test case passes when you are able to signup successfully.
     @Test
     public void shouldSignUpForValidRequest() throws Exception {
-        final CustomerEntity createdCustomerEntity = new CustomerEntity();
+        final Customer createdCustomerEntity = new Customer();
         final String customerId = UUID.randomUUID().toString();
         createdCustomerEntity.setUuid(customerId);
         when(mockCustomerService.saveCustomer(any())).thenReturn(createdCustomerEntity);
@@ -135,9 +135,9 @@ public class CustomerControllerTest {
     //This test case passes when you are able to login successfully.
     @Test
     public void shouldLoginForValidRequest() throws Exception {
-        final CustomerAuthEntity createdCustomerAuthEntity = new CustomerAuthEntity();
+        final CustomerAuth createdCustomerAuthEntity = new CustomerAuth();
         createdCustomerAuthEntity.setAccessToken("accessToken");
-        final CustomerEntity customerEntity = new CustomerEntity();
+        final Customer customerEntity = new Customer();
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
         createdCustomerAuthEntity.setCustomer(customerEntity);
@@ -201,8 +201,8 @@ public class CustomerControllerTest {
     //This test case passes when you are able to logout successfully.
     @Test
     public void shouldLogoutForValidRequest() throws Exception {
-        final CustomerAuthEntity createdCustomerAuthEntity = new CustomerAuthEntity();
-        final CustomerEntity customerEntity = new CustomerEntity();
+        final CustomerAuth createdCustomerAuthEntity = new CustomerAuth();
+        final Customer customerEntity = new Customer();
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
         createdCustomerAuthEntity.setCustomer(customerEntity);
@@ -267,14 +267,14 @@ public class CustomerControllerTest {
     //This test case passes when you are able to update customer details successfully.
     @Test
     public void shouldUpdateCustomerDetails() throws Exception {
-        final CustomerEntity customerEntity = new CustomerEntity();
+        final Customer customerEntity = new Customer();
         customerEntity.setFirstName("firstname");
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
 
         when(mockCustomerService.getCustomer("auth")).thenReturn(customerEntity);
 
-        final CustomerEntity updatedCustomerEntity = new CustomerEntity();
+        final Customer updatedCustomerEntity = new Customer();
         updatedCustomerEntity.setFirstName("first");
         updatedCustomerEntity.setLastName("last");
         updatedCustomerEntity.setUuid(customerId);
@@ -364,7 +364,7 @@ public class CustomerControllerTest {
     //This test case passes when you are able to update your password successfully.
     @Test
     public void shouldUpdateCustomerPassword() throws Exception {
-        final CustomerEntity customerEntity = new CustomerEntity();
+        final Customer customerEntity = new Customer();
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
 
@@ -468,7 +468,7 @@ public class CustomerControllerTest {
     // password is weak.
     @Test
     public void shouldNotUpdateCustomerPasswordIfNewPasswordDoesNotFollowRecommendedPasswordFormat() throws Exception {
-        final CustomerEntity customerEntity = new CustomerEntity();
+        final Customer customerEntity = new Customer();
         when(mockCustomerService.getCustomer("auth")).thenReturn(customerEntity);
         when(mockCustomerService.updateCustomerPassword("oldPwd", "newPwd", customerEntity))
                 .thenThrow(new UpdateCustomerException("UCR-001", "Weak password!"));
