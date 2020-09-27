@@ -29,9 +29,9 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    /* The method handles get All Categories request
-    & produces response in CategoriesListResponse and returns list of category with details from the db. If error returns error code and error message.
-    */
+     /* The method handles get All Categories request
+     & produces response in CategoriesListResponse and returns list of category with details from the db. If error returns error code and error message.
+     */
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoriesListResponse> getAllCategories(){

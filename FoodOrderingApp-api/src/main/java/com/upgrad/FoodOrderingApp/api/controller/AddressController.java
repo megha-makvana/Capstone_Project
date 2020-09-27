@@ -144,7 +144,7 @@ public class AddressController {
     }
 
     /*  The method handles States request.It produces response in StatesListResponse and returns UUID & stateName .If error Return error code and error Message.
-     */
+   */
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET,path = "/states",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 
